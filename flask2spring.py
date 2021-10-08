@@ -22,10 +22,14 @@ def mainpage():
 
 @app.route('/predict/', methods=['POST'])
 def abuse_predict():
+    print('prediction api called.')
     parser = reqparse.RequestParser()
-    parser.add_argument('message')#json key 추가
+    parser.add_argument('content')#json key 추가
 
-    sentence = parser.parse_args()['message']
+    sentence = parser.parse_args()['content']
+    print(sentence)
+
+    original = sentence
 
     sentence = sentence.lower()  # 소문자로 변환
     tokens = sentence.split(' ')  # 공백 기준 스플릿
@@ -61,14 +65,15 @@ def abuse_predict():
     score = float(loaded_model.predict(pad_new)) # 예측
 
     if(score > 0.5):
-        result = {"Prediction": 'ABUSIVE', "Probability": score * 100}
+        result = {"spamResult": "<result><totalscore>" + str(round(score * 100, 2)) + "</totalscore><totallevel>ABUSIVE</totallevel><suspicion><type>heuristic</type><score>" + str(round(score * 100, 2)) + "</score><level>ABUSIVE</level><token><![CDATA[" + original + "]]></token></suspicion></result>"}
 
     else:
-        result = {"Prediction": 'NON-ABUSIVE', "Probability": round((1 - score) * 100,2)}
+        result = {"spamResult": "<result><totalscore>" + str(round(score * 100, 2)) + "</totalscore><totallevel>NON-ABUSIVE</totallevel><suspicion><type>heuristic</type><score>" + str(round(score * 100, 2)) + "</score><level>NON-ABUSIVE</level><token><![CDATA[" + original + "]]></token></suspicion></result>"}
 
+    print(result)
     return result, 200
 
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', port=5000)
