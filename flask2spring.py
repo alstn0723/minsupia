@@ -28,11 +28,16 @@ def abuse_predict():
 
     sentence = parser.parse_args()['content']
     print(sentence)
-
+    sentence = sentence.replace("Org Name:", "")
     original = sentence
+
+    print(sentence)
+
 
     sentence = sentence.lower()  # 소문자로 변환
     tokens = sentence.split(' ')  # 공백 기준 스플릿
+    token_score = []
+
     for i in reversed(range(len(tokens))):
         if '@' in tokens[i]:
             del tokens[i]
@@ -62,13 +67,21 @@ def abuse_predict():
 
     encoded = tokenizer.texts_to_sequences([tokens]) # 정수 인코딩
     pad_new = pad_sequences(encoded, 12) # 패딩
-    score = float(loaded_model.predict(pad_new)) # 예측
+    total_score = float(loaded_model.predict(pad_new)) # 예측
 
-    if(score > 0.5):
-        result = {"spamResult": "<result><totalscore>" + str(round(score * 100, 2)) + "</totalscore><totallevel>ABUSIVE</totallevel><suspicion><type>heuristic</type><score>" + str(round(score * 100, 2)) + "</score><level>ABUSIVE</level><token><![CDATA[" + original + "]]></token></suspicion></result>"}
+    for i in range(len(tokens)):
+        encoded = tokenizer.texts_to_sequences([tokens[i]])  # 정수 인코딩
+        pad_new = pad_sequences(encoded, 12)  # 패딩
+        score = float(loaded_model.predict(pad_new))
+        score = str(round(score * 100, 2))# 예측
+        token_score.append(score)
+
+
+    if(total_score > 0.5):
+        result = {"spamResult": "<result><totalscore>" + str(round(total_score * 100, 2)) + "</totalscore><totallevel>ABUSIVE</totallevel><suspicion><type>nlp</type><score>" + str(token_score) + "</score><level>ABUSIVE</level><token>" + str(tokens) + "></token></suspicion></result>"}
 
     else:
-        result = {"spamResult": "<result><totalscore>" + str(round(score * 100, 2)) + "</totalscore><totallevel>NON-ABUSIVE</totallevel><suspicion><type>heuristic</type><score>" + str(round(score * 100, 2)) + "</score><level>NON-ABUSIVE</level><token><![CDATA[" + original + "]]></token></suspicion></result>"}
+        result = {"spamResult": "<result><totalscore>" + str(round(total_score * 100, 2)) + "</totalscore><totallevel>NON-ABUSIVE</totallevel><suspicion><type>nlp</type><score>" + str(token_score) + "</score><level>NON-ABUSIVE</level><token>" + str(tokens) + "</token></suspicion></result>"}
 
     print(result)
     return result, 200
