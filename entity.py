@@ -1,8 +1,6 @@
 import re
 import spacy
 import pandas as pd
-import flask_reqparse as reqparse
-from flask import Flask
 #from spacy.training import Example
 
 #SPACY package Load
@@ -10,7 +8,7 @@ SPACY_LOAD = spacy.load('C:/Users/trumpia/anaconda3/Lib/site-packages/en_core_we
 
 #REGEX
 EMAIL_REGEX = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
-ADDRESS_REGEX = re.compile(r'\d{3,5}(.){15,}\D\d{5}')
+ADDRESS_REGEX = re.compile(r'(?!2021)\d{3,5}(.){15,}\D\d{5}')
 URL_REGEX = re.compile(r'http\S{7,}')
 YEAR_REGEX = re.compile(r'((19)|(20))([0-9]{2})')
 DATE_REGEX_MONTH = re.compile(r'((0)?[1-9]|1[012])([-/ .])(3[01]|[12][0-9]|(0)?[1-9])')
@@ -96,12 +94,21 @@ def NER_TAG(DATA):
         if (TYPE in NEEDS) and (TYPE != ""):
             print(f"{TOKEN} ==> {TYPE}")
 
+    print('----------------------------')
 
 
 
-data = pd.read_csv("inbound.csv", encoding='latin')
-data = data['CONTENT']
-NER_TAG(data[1564])
+
+trm = pd.read_csv("inbound.csv", encoding='latin')
+trm = trm['CONTENT']
+
+for i in range(len(trm)):
+    NER_TAG(trm[i])
+
+
+NER_TAG("i want to reservate on next Friday")
+NER_TAG("Last Christmas, I was born")
+NER_TAG("How about 15:00 or 9:00aM of 09/04/21?")
 
 #for Test
 '''
@@ -122,7 +129,7 @@ for TOKEN in doc:
     print(TOKEN)
     #DIGIT CLASSIFY
     if str(TOKEN).isdigit():
-        if len(TOKEN) > 4:
+        if len(TOKEN) > 4:git s
             if ((len(TOKEN) == 6) or (len(TOKEN) == 8)):
                 if DATE_REGEX_DIGITONLY.match(str(TOKEN)) != None:
                     TYPE = "DATE"
