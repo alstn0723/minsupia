@@ -11,11 +11,12 @@ SPACY_LOAD = spacy.load('C:/Users/trumpia/anaconda3/Lib/site-packages/en_core_we
 EMAIL_REGEX = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
 ADDRESS_REGEX = re.compile(r'\d{3,5}(.){15,}\D\d{5}')
 URL_REGEX = re.compile(r'http\S{7,}')
+YEAR_REGEX = re.compile(r'([18]|[19]|[20])([0-9]{2})')
 DATE_REGEX_MONTH = re.compile(r'((0)?[1-9]|1[012])([-/ .])(3[01]|[12][0-9]|(0)?[1-9])')
 DATE_REGEX_YEAR = re.compile(r'((0)?[1-9]|1[012])([-/ .])(3[01]|[12][0-9]|(0)?[1-9])([-/ .])(([1-9][0-9]{3})|([0-9]{2}))')
 DATE_REGEX_DIGITONLY = re.compile(r'(([1-9][0-9]{3})|([0-9]{2}))((0)[1-9]|1[012])(3[01]|[12][0-9]|(0)[1-9])')#ㅄ 디짓 잡아내기
 TIME_REGEX = re.compile(r'^((([0]?[1-9]|1[0-2])(:|\.)?[0-5][0-9]((:|\.)[0-5][0-9])?( )?(AM|am|aM|Am|PM|pm|pM|Pm))|(([0]?[0-9]|1[0-9]|2[0-3])(:|\.)[0-5][0-9]((:|\.)[0-5][0-9])?))$')
-NEEDS = "PERSON|DATE|TIME|CARDINAL|ORDINAL"
+NEEDS = "PERSON|DATE|TIME|ORDINAL"
 
 
 
@@ -69,13 +70,19 @@ for i in range(len(data)):
         if (TIME_REGEX.match(str(TOKEN)) != None):
             TYPE = "TIME"
 
-        if TOKEN.isdigit():
+        #DIGIT CLASSIFY
+        if str(TOKEN).isdigit():
             if len(TOKEN) > 4:
                 if ((len(TOKEN) == 6) or (len(TOKEN) == 8)):
                     if DATE_REGEX_DIGITONLY.match(str(TOKEN)) != None:
                         TYPE = "DATE"
                     else:
                         TYPE = "CARDINAL"
+                else:
+                    TYPE = "CARDINAL"
+            if len(TOKEN) == 4:
+                if YEAR_REGEX.match(str(TOKEN)) != None:
+                    TYPE = "DATE"
                 else:
                     TYPE = "CARDINAL"
 
