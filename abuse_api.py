@@ -4,14 +4,20 @@ from tensorflow.keras.models import load_model
 from nltk.corpus import stopwords
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re, pickle
+import spacy
 
-
+SPACY_LOAD = spacy.load('C:/Users/trumpia/anaconda3/Lib/site-packages/en_core_web_sm/en_core_web_sm-3.1.0')
 
 stop_words = set(stopwords.words('english'))
-loaded_model = load_model('best_model.h5')
+
+
 with open('tokenizer.pickle', 'rb') as handle:
     tokenizer = pickle.load(handle)
 
+loaded_model = load_model('best_model.h5')
+
+
+loaded_model.summary()
 
 app = Flask(__name__)
 
@@ -20,14 +26,14 @@ def mainpage():
     return 'Hi minsoo'
 
 
-@app.route('/predict/', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def abuse_predict():
     print('prediction api called.')
     parser = reqparse.RequestParser()
     parser.add_argument('content')#json key 추가
 
     sentence = parser.parse_args()['content']
-    print(sentence)
+
     sentence = sentence.replace("Org Name:", "")
     original = sentence
 
@@ -60,18 +66,18 @@ def abuse_predict():
         if tokens[i] == '':
             del tokens[i]
         # 길이 1인 찌꺼기 제거
-        elif len(tokens[i]) < 3:
+        elif len(tokens[i]) < 2:
             del tokens[i]
 
     print(tokens)
 
     encoded = tokenizer.texts_to_sequences([tokens]) # 정수 인코딩
-    pad_new = pad_sequences(encoded, 12) # 패딩
+    pad_new = pad_sequences(encoded, 20) # 패딩
     total_score = float(loaded_model.predict(pad_new)) # 예측
 
     for i in range(len(tokens)):
         encoded = tokenizer.texts_to_sequences([tokens[i]])  # 정수 인코딩
-        pad_new = pad_sequences(encoded, 12)  # 패딩
+        pad_new = pad_sequences(encoded, 20)  # 패딩
         score = float(loaded_model.predict(pad_new))
         score = str(round(score * 100, 2))# 예측
         token_score.append(score)

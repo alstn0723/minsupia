@@ -134,19 +134,19 @@ def Seperate(DATA):
 
 
 def Fitting(DATA):
-    #BagofWords에 대해 정수 인덱스 부여
-    tokenizer = Tokenizer()
-    tokenizer.fit_on_texts(DATA)
+    #BOW에 대해 정수 인덱스 부여
+    BOW = Tokenizer()
+    BOW.fit_on_texts(DATA)
 
     threshold = 3  #기준 기준 엄기준
-    total_cnt = len(tokenizer.word_index) # 단어의 수
+    total_cnt = len(BOW.word_index) # 단어의 수
 
     rare_cnt = 0    # 등장 빈도수가 threshold보다 작은 단어의 개수를 카운트
     total_freq = 0  # TRAIN_DATA의 전체 단어 빈도수 총 합
     rare_freq = 0   # 등장 빈도수가 threshold보다 작은 단어의 등장 빈도수의 총 합
 
     # 단어와 빈도수의 PAIR를 Key, Value로 받기
-    for key, value in tokenizer.word_counts.items():
+    for key, value in BOW.word_counts.items():
         total_freq = total_freq + value
 
         # 단어의 등장 빈도수가 threshold보다 작으면
@@ -157,10 +157,10 @@ def Fitting(DATA):
     vocab_size = total_cnt - rare_cnt + 1
     print('Vocab Size = ',vocab_size)
 
-    tokenizer = Tokenizer(vocab_size)
-    tokenizer.fit_on_texts(DATA)
+    BOW = Tokenizer(vocab_size)
+    BOW.fit_on_texts(DATA)
 
-    return tokenizer, vocab_size
+    return BOW, vocab_size
 
 
 #전체 DATA에서 지정된 max_len 보다 짧은 DATA의 비율
@@ -183,11 +183,11 @@ def Pickling(TOKENIZER):
         print("saving BOW to Abuse_Tokenizer.pickle")
 
 #BOW 정수 인덱싱
-def Indexing(BOW):
+def Indexing(DATA, BOW):
 
-    BOW = tokenizer.texts_to_sequences(BOW)
+    DATA = BOW.texts_to_sequences(DATA)
 
-    return BOW
+    return DATA
 
 #Input의 크기를 맞춰주기 위해 zero-padding
 def Padding(DATA, max_len):
@@ -230,29 +230,41 @@ def Evaluate(INPUT_H5, TEST, TEST_FLAG):
 
 
 def Main():
+    #Input CSV 불러오기
     DATA = Load_data("ADATA.csv")
 
+    #학습, 검증 DATA 분리
     TRAIN_DATA, TEST_DATA, TRAIN_DATA_FLAG, TEST_DATA_FLAG = Seperate(DATA)
 
+    #분리된 데이터 전처리(갑자기 든 생각 : 전처리 하고 분리하면 코드 한 줄 줄어듦)
     TRAIN_DATA = Preprocess(TRAIN_DATA)
     TEST_DATA = Preprocess(TEST_DATA)
 
-    tokenizer, vocab_size = Fitting(TRAIN_DATA)
+    #keras.tokenizer에 fit, BOW 생성
+    BOW, vocab_size = Fitting(TRAIN_DATA)
 
-    Pickling(tokenizer)
+    #BOW 저장
+    Pickling(BOW)
 
-    TRAIN_DATA = Indexing(TRAIN_DATA)
-    TEST_DATA = Indexing(TEST_DATA)
+    #정수 인덱싱
+    TRAIN_DATA = Indexing(TRAIN_DATA, BOW)
+    TEST_DATA = Indexing(TEST_DATA, BOW)
 
+    #Input의 최대 크기 지정
     max_len = 20
 
     #print('TRAIN DATA의 최대 길이 :',max(len(l) for l in TRAIN_DATA_BOW))
     #print('TRAIN DATA의 평균 길이 :',sum(map(len, TRAIN_DATA_BOW))/len(TRAIN_DATA_BOW))
 
+    #max_len의 크기에 맞춰 제로패딩
     TRAIN_DATA = Padding(TRAIN_DATA, max_len)
     TEST_DATA = Padding(TEST_DATA, max_len)
 
+    #빌드
     MODEL = Build_Model(vocab_size)
 
+    #학습 및 저장
     Train_Model(MODEL, TRAIN_DATA, TRAIN_DATA_FLAG, 10, 1000, "Abuse_Detect.h5")
+
+    #검증
     Evaluate('Abuse_Detect.h5', TEST_DATA, TEST_DATA_FLAG)
