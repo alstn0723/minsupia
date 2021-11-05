@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
-import re, collections
+import re
 import os
-import tensorflow as tf
 
 from keras.layers import Dropout
 from nltk.corpus import stopwords
@@ -211,21 +210,21 @@ def Build_Model(vocab_size):
     return model
 
 #모델 학습 및 저장
-def Train_Model(MODEL, TRAIN, TRAIN_FLAG, EPOCH, BATCH, OUTPUT_H5): #output must be ~~~.h5 format
+def Train_Model(MODEL, TRAIN, TRAIN_FLAG, EPOCH, BATCH, MODEL_H5): #output must be ~~~.h5 format
 
     #Validation loss 가 3회 증가하면 학습 종료
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=3)
 
     #학습하면서 이전 모델보다 ACC가 높을때만 .h5파일로 저장
-    mc = ModelCheckpoint(OUTPUT_H5, monitor='val_acc', mode='max', verbose=1, save_best_only=True)
+    mc = ModelCheckpoint(MODEL_H5, monitor='val_acc', mode='max', verbose=1, save_best_only=True)
 
     #학습
     history = MODEL.fit(TRAIN, TRAIN_FLAG, epochs=EPOCH, callbacks=[es, mc], batch_size=BATCH, validation_split=0.2, shuffle=True)
 
 
 #모델 평가
-def Evaluate(INPUT_H5, TEST, TEST_FLAG):
-    MODEL = load_model(INPUT_H5)
+def Evaluate(MODEL_H5, TEST, TEST_FLAG):
+    MODEL = load_model(MODEL_H5)
     print("\n MODEL ACC: %.4f" % (MODEL.evaluate(TEST, TEST_FLAG)[1]))
 
 
@@ -268,3 +267,5 @@ def Main():
 
     #검증
     Evaluate('Abuse_Detect.h5', TEST_DATA, TEST_DATA_FLAG)
+
+Main()
