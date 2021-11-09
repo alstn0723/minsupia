@@ -9,9 +9,6 @@ import abuse_base as ab
 
 
 
-
-
-
 app = Flask(__name__)
 
 @app.route('/')
