@@ -72,14 +72,17 @@ def emailfind(list):
 
 #CSV 불러오면서 df 정리
 def Load_data(directory):
-    data = pd.read_csv(directory)
-    data = data.drop_duplicates(['CONTENT'])            #CONTENT 컬럼 중복 DATA 삭제
-    data = data.dropna()                                #NULL 제거
-    data = data.sample(frac=1).reset_index(drop=True)   #셔플, 인덱스 재배열
-    del data['Unnamed: 0']                              #csv 머지하면 가끔 생기던데 그거 지우기
+    try:
+        data = pd.read_csv(directory)
+        data = data.drop_duplicates(['CONTENT'])            #CONTENT 컬럼 중복 DATA 삭제
+        data = data.dropna()                                #NULL 제거
+        data = data.sample(frac=1).reset_index(drop=True)   #셔플, 인덱스 재배열
+        #del data['Unnamed: 0']                              #csv 머지하면 가끔 생기던데 그거 지우기
 
-    return data
+        return data
 
+    except FileNotFoundError:
+        print("INPUT DATA 경로 잘못됨.")
 
 #토크나이징, 정제화, BOW 생성
 def Preprocess(data):
@@ -120,15 +123,18 @@ def Preprocess(data):
 #TRAIN, TEST 분리
 def Seperate(DATA):
 
-    #data의 20%를 검증용 testdata, 80%를 학습용 traindata로 분리
-    TRAIN_DATA = DATA[int(len(DATA) * 0.2) + 1:]
-    TEST_DATA = DATA[:int(len(DATA) * 0.2)]
+    if len(DATA) > 10:
+        #data의 20%를 검증용 testdata, 80%를 학습용 traindata로 분리
+        TRAIN_DATA = DATA[int(len(DATA) * 0.2) + 1:]
+        TEST_DATA = DATA[:int(len(DATA) * 0.2)]
 
-    #욕설인지 판단하는 'ABUSE' 컬럼 분리
-    TRAIN_DATA_FLAG = np.array(TRAIN_DATA['ABUSE'])
-    TEST_DATA_FLAG = np.array(TEST_DATA['ABUSE'])
+        #욕설인지 판단하는 'ABUSE' 컬럼 분리
+        TRAIN_DATA_FLAG = np.array(TRAIN_DATA['ABUSE'])
+        TEST_DATA_FLAG = np.array(TEST_DATA['ABUSE'])
 
-    return TRAIN_DATA, TEST_DATA, TRAIN_DATA_FLAG, TEST_DATA_FLAG
+        return TRAIN_DATA, TEST_DATA, TRAIN_DATA_FLAG, TEST_DATA_FLAG
+    else:
+        print("DATA 부족.")
 
 
 
@@ -267,5 +273,3 @@ def Main():
 
     #검증
     Evaluate('Abuse_Detect.h5', TEST_DATA, TEST_DATA_FLAG)
-
-Main()
