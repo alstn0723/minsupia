@@ -8,13 +8,21 @@ stop_words = set(stopwords.words('english'))
 #모델 로드
 def Load_Model(MODEL_H5, BOW_PICKLE):
 
-    #
-    with open(BOW_PICKLE, 'rb') as handle:
-        BOW = pickle.load(handle)
+    try:
+        with open(BOW_PICKLE, 'rb') as handle:
+            BOW = pickle.load(handle)
 
-    MODEL = load_model(MODEL_H5)
+        MODEL = load_model(MODEL_H5)
 
-    return MODEL, BOW
+        return MODEL, BOW
+    except FileNotFoundError:
+        print("BoW(Tokenizer) 의 경로 잘못됨.")
+    except IOError:
+        print("Model 의 경로 잘못됨.")
+
+
+
+print(Load_Model("Abuse_Detect.h5", "Abuse_Tokenizer.pickle"))
 
 
 
@@ -51,7 +59,6 @@ def Preprocess_Predict(sentence):
             del tokens[i]
 
     return tokens
-
 
 
 
