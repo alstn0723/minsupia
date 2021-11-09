@@ -82,7 +82,7 @@ def Load_data(directory):
         return data
 
     except FileNotFoundError:
-        print("INPUT DATA 경로 잘못됨.")
+        raise FileNotFoundError("INPUT DATA 경로 잘못됨.")
 
 #토크나이징, 정제화, BOW 생성
 def Preprocess(data):
@@ -134,7 +134,7 @@ def Seperate(DATA):
 
         return TRAIN_DATA, TEST_DATA, TRAIN_DATA_FLAG, TEST_DATA_FLAG
     else:
-        print("DATA 부족.")
+        raise FileNotFoundError("DATA 부족.")
 
 
 
@@ -160,6 +160,11 @@ def Fitting(DATA):
             rare_freq = rare_freq + value
 
     vocab_size = total_cnt - rare_cnt + 1
+
+    #vocab_size 가 너무 적으면 학습의 의미가 없기에 에러 raise
+    if vocab_size < 100:
+        raise ValueError("Vocab_size의 크기가 100 이하입니다. Training Input Data를 늘려야 합니다.")
+
     print('Vocab Size = ',vocab_size)
 
     BOW = Tokenizer(vocab_size)
