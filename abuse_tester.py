@@ -27,6 +27,5 @@ def ACC_Check(sentence):
         for i in range(len(tokens)):
             print("{0}  ==>  {1}".format(tokens[i], token_score[i]))
 
-
-
-ACC_Check("val_acc did not improve from")
+    result = round(total_score * 100, 4)
+    return result
