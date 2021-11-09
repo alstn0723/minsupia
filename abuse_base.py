@@ -16,9 +16,11 @@ def Load_Model(MODEL_H5, BOW_PICKLE):
 
         return MODEL, BOW
     except FileNotFoundError:
-        print("BoW(Tokenizer) 의 경로 잘못됨.")
+        raise FileNotFoundError("Pickle 파일 경로 잘못됨.")
     except IOError:
-        print("Model 의 경로 잘못됨.")
+        raise FileNotFoundError("h5 파일 경로 잘못됨.")
+
+
 
 
 
