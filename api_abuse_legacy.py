@@ -5,7 +5,7 @@ from nltk.corpus import stopwords
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import re, pickle
 import spacy
-import abuse_base as ab
+import abuse_tester as ab
 
 
 
