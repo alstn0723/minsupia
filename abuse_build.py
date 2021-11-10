@@ -15,6 +15,7 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 
 #불용어 사전
 stop_words = set(stopwords.words('english'))
+URL_REGEX = re.compile(r'http\S{7,}')
 
 '''
 #교정 사전 내 단어 추출
@@ -91,22 +92,16 @@ def Preprocess(data):
 
     for sentence in data['CONTENT']:
         sentence = sentence.lower()     # 소문자로 변환
-        tokens = sentence.split(' ')    # 공백 기준 스플릿
+        URL = re.search(URL_REGEX, sentence)
 
-        for i in reversed(range(len(tokens))):
-            if '@' in tokens[i]:        #나중에 손 봐야됨
-                del tokens[i]
-            elif '&' in tokens[i]:
-                del tokens[i]
-            elif 'http' in tokens[i]:
-                del tokens[i]
-            elif '#' in tokens[i]:
-                del tokens[i]
-            else:
-                tokens[i] = re.sub(r"[^a-zA-Z ]", " ", tokens[i])
+        if URL != None:
+            URL = URL.group()
+            sentence = sentence.replace(URL, "") #URL 제거
 
-        tokens = ' '.join(tokens)
-        tokens = tokens.split(' ')
+        sentence = re.sub(r"[^a-zA-Z ]", " ", sentence)
+
+
+        tokens = sentence.split(' ')
         tokens = [word for word in tokens if not word in stop_words] # 불용어 제거
 
         for i in reversed(range(len(tokens))):
@@ -278,3 +273,5 @@ def Main():
 
     #검증
     Evaluate('Abuse_Detect.h5', TEST_DATA, TEST_DATA_FLAG)
+
+Main()
