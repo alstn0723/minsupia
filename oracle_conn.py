@@ -1,4 +1,3 @@
-import tensorflow as tf
 import cx_Oracle
 import os
 import pandas as pd
@@ -8,16 +7,20 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 MODEL, BOW = at.Load_Model("Abuse_Detect.h5", "Abuse_Tokenizer.pickle")
 
+def Predict(MODEL, padded):
+    score = float(MODEL.predict(padded))
+    return score
+
 
 def ACC_Check(sentence):
 
     tokens = at.Preprocess_Predict(sentence)
     token_score = []
-
     encoded = BOW.texts_to_sequences([tokens]) # 정수 인코딩
     pad_new = pad_sequences(encoded, 20) # 패딩
     total_score = float(MODEL.predict(pad_new)) # 예측
 
+    #단어 별 예측
     for i in range(len(tokens)):
         encoded = BOW.texts_to_sequences([tokens[i]])  # 정수 인코딩
         pad_new = pad_sequences(encoded, 20)  # 패딩
@@ -54,19 +57,23 @@ start = time.time()
 Oracle_Init()
 
 # 연결 됐는지 버전 체크
-#print(cx_Oracle.clientversion())
+print(cx_Oracle.clientversion())
 
 conn, cur = Oracle_Conn("d_alstn0723", "steam9588!", "192.168.2.101:1521/DCDB")
 
 
 data = pd.read_csv("inbound.csv")
 data = data['CONTENT']
+for i in range(len(data)):
+    ACC_Check(data[i])
+    print(i)
 '''
 sql = "DELETE FROM E_CONTENT_SPAM_SCORE"
 cur.execute(sql)
 sql = "DELETE FROM E_TOKEN_SPAM_SCORE"
 cur.execute(sql)
 '''
+
 for i in range(len(data)):
     print(i)
     sentence, total_score, tokens, token_score = ACC_Check(data[i])
