@@ -4,6 +4,9 @@ from nltk.corpus import stopwords
 from tensorflow.keras.models import load_model
 import pickle, re
 
+URL_REGEX = re.compile(r'http\S{7,}')
+
+
 #NLTK 불용어 사전
 stop_words = set(stopwords.words('english'))
 #모델 로드
@@ -22,45 +25,36 @@ def Load_Model(MODEL_H5, BOW_PICKLE):
         raise FileNotFoundError("h5 파일 경로 잘못됨.")
 
 
+MODEL, BOW = Load_Model('Abuse_Detect.h5', 'Abuse_Tokenizer.pickle')
+
 
 def Preprocess_Predict(sentence):
 
     sentence = sentence.lower()     # 소문자로 변환
-    tokens = sentence.split(' ')    # 공백 기준 스플릿
+    URL = re.search(URL_REGEX, sentence)
 
+    if URL != None:
+        URL = URL.group()
+        sentence = sentence.replace(URL, "")  # URL 제거
 
-    for i in reversed(range(len(tokens))):
-        if '@' in tokens[i]:
-            del tokens[i]
-        elif '&' in tokens[i]:
-            del tokens[i]
-        elif 'http' in tokens[i]:
-            del tokens[i]
-        elif '#' in tokens[i]:
-            del tokens[i]
-        else:
-            tokens[i] = re.sub(r"[^a-zA-Z ]", " ", tokens[i])
+    sentence = re.sub(r"[^a-zA-Z ]", " ", sentence)
 
-    tokens = ' '.join(tokens)
-    tokens = tokens.split(' ')
+    tokens = sentence.split(' ')
     tokens = [word for word in tokens if not word in stop_words]  # 불용어 제거
 
     for i in reversed(range(len(tokens))):
-
-        # 불용어 처리 이후 남은 null 제거
-        if tokens[i] == '':
+        # 길이 1인 찌꺼기 제거
+        if len(tokens[i]) < 2:
             del tokens[i]
 
-        # 길이 1인 찌꺼기 제거
-        elif len(tokens[i]) < 2:
+        # 불용어 처리 이후 남은 null 제거
+        elif tokens[i] == '':
             del tokens[i]
 
     return tokens
 
 
 def ACC_Check(sentence):
-
-    MODEL, BOW = Load_Model('Abuse_Detect.h5', 'Abuse_Tokenizer.pickle')
 
     tokens = Preprocess_Predict(sentence)
     token_score = []
