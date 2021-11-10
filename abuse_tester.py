@@ -1,11 +1,68 @@
-import abuse_base as ab
+import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from nltk.corpus import stopwords
+from tensorflow.keras.models import load_model
+import pickle, re
+
+#NLTK 불용어 사전
+stop_words = set(stopwords.words('english'))
+#모델 로드
+def Load_Model(MODEL_H5, BOW_PICKLE):
+
+    try:
+        with open(BOW_PICKLE, 'rb') as handle:
+            BOW = pickle.load(handle)
+
+        MODEL = load_model(MODEL_H5)
+
+        return MODEL, BOW
+    except FileNotFoundError:
+        raise FileNotFoundError("Pickle 파일 경로 잘못됨.")
+    except IOError:
+        raise FileNotFoundError("h5 파일 경로 잘못됨.")
+
+
+
+def Preprocess_Predict(sentence):
+
+    sentence = sentence.lower()     # 소문자로 변환
+    tokens = sentence.split(' ')    # 공백 기준 스플릿
+
+
+    for i in reversed(range(len(tokens))):
+        if '@' in tokens[i]:
+            del tokens[i]
+        elif '&' in tokens[i]:
+            del tokens[i]
+        elif 'http' in tokens[i]:
+            del tokens[i]
+        elif '#' in tokens[i]:
+            del tokens[i]
+        else:
+            tokens[i] = re.sub(r"[^a-zA-Z ]", " ", tokens[i])
+
+    tokens = ' '.join(tokens)
+    tokens = tokens.split(' ')
+    tokens = [word for word in tokens if not word in stop_words]  # 불용어 제거
+
+    for i in reversed(range(len(tokens))):
+
+        # 불용어 처리 이후 남은 null 제거
+        if tokens[i] == '':
+            del tokens[i]
+
+        # 길이 1인 찌꺼기 제거
+        elif len(tokens[i]) < 2:
+            del tokens[i]
+
+    return tokens
+
 
 def ACC_Check(sentence):
 
-    MODEL, BOW = ab.Load_Model('Abuse_Detect.h5', 'Abuse_Tokenizer.pickle')
+    MODEL, BOW = Load_Model('Abuse_Detect.h5', 'Abuse_Tokenizer.pickle')
 
-    tokens = ab.Preprocess_Predict(sentence)
+    tokens = Preprocess_Predict(sentence)
     token_score = []
 
     encoded = BOW.texts_to_sequences([tokens]) # 정수 인코딩
@@ -19,13 +76,14 @@ def ACC_Check(sentence):
         score = str(round(score * 100, 2))# 예측
         token_score.append(score)
 
+    total_score = round(total_score * 100, 4)
+    return sentence, total_score, tokens, token_score
 
 
-    if(total_score > 0):
+'''
+    if (total_score > 0):
         print("DATA total score : {0} ".format(round(total_score * 100, 4)))
         print(sentence)
         for i in range(len(tokens)):
             print("{0}  ==>  {1}".format(tokens[i], token_score[i]))
-
-    result = round(total_score * 100, 4)
-    return result
+'''
