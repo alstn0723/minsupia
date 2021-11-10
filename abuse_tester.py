@@ -54,7 +54,7 @@ def Preprocess_Predict(sentence):
     return tokens
 
 
-def ACC_Check(sentence):
+def ACC_Check(sentence, MODEL, BOW):
 
     tokens = Preprocess_Predict(sentence)
     token_score = []
