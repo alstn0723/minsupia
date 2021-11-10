@@ -105,10 +105,15 @@ def Preprocess(data):
         tokens = [word for word in tokens if not word in stop_words] # 불용어 제거
 
         for i in reversed(range(len(tokens))):
+
+            # 길이 1이하인 TOKEN 제거
+            if len(tokens[i]) < 2:
+                del tokens[i]
+
             #불용어 처리 이후 남은 None TOKEN 제거
-            if tokens[i] == '': del tokens[i]
-            #길이 1이하인 TOKEN 제거
-            elif len(tokens[i]) < 2: del tokens[i]
+            elif tokens[i] == '':
+                del tokens[i]
+
 
         Tokenized.append(tokens)
 
