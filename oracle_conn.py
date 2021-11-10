@@ -1,5 +1,33 @@
+import tensorflow as tf
 import cx_Oracle
 import os
+import pandas as pd
+import abuse_tester as at
+import time
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+MODEL, BOW = at.Load_Model("Abuse_Detect.h5", "Abuse_Tokenizer.pickle")
+
+
+def ACC_Check(sentence):
+
+    tokens = at.Preprocess_Predict(sentence)
+    token_score = []
+
+    encoded = BOW.texts_to_sequences([tokens]) # 정수 인코딩
+    pad_new = pad_sequences(encoded, 20) # 패딩
+    total_score = float(MODEL.predict(pad_new)) # 예측
+
+    for i in range(len(tokens)):
+        encoded = BOW.texts_to_sequences([tokens[i]])  # 정수 인코딩
+        pad_new = pad_sequences(encoded, 20)  # 패딩
+        score = float(MODEL.predict(pad_new))
+        score = str(round(score * 100, 2))# 예측
+        token_score.append(score)
+
+    total_score = round(total_score * 100, 4)
+    return sentence, total_score, tokens, token_score
+
 
 def Oracle_Init():
     #환경변수 설정
@@ -17,14 +45,61 @@ def Oracle_Conn(ID, PASSWORD, HOSTPORTSERVICE):
 
     return conn, cursorname
 
+def Close_Conn(conn):
+    conn.commit()
+    conn.close()
+
+start = time.time()
 
 Oracle_Init()
+
 # 연결 됐는지 버전 체크
-print(cx_Oracle.clientversion())
+#print(cx_Oracle.clientversion())
 
 conn, cur = Oracle_Conn("d_alstn0723", "steam9588!", "192.168.2.101:1521/DCDB")
+
+
+data = pd.read_csv("inbound.csv")
+data = data['CONTENT']
+'''
+sql = "DELETE FROM E_CONTENT_SPAM_SCORE"
+cur.execute(sql)
+sql = "DELETE FROM E_TOKEN_SPAM_SCORE"
+cur.execute(sql)
+'''
+for i in range(len(data)):
+    print(i)
+    sentence, total_score, tokens, token_score = ACC_Check(data[i])
+
+    sql = """INSERT INTO E_CONTENT_SPAM_SCORE(CONTENTSPAMSCOREUID, MEMBERUID, USERUID, CONTENT, SCORE) VALUES (CONTENT_SPAM_SCORE_SEQ.NEXTVAL, :1, :2, :3, :4)"""
+    cur.execute(sql, (17115, 17115, sentence, total_score))
+
+    for j in range(len(tokens)):
+        sql = """INSERT INTO E_TOKEN_SPAM_SCORE(TOKENSPAMSCOREUID, CONTENTSPAMSCOREUID, TOKEN, SCORE) VALUES (TOKEN_SPAM_SCORE_SEQ.NEXTVAL, CONTENT_SPAM_SCORE_SEQ.CURRVAL, :1, :2)"""
+        cur.execute(sql, (tokens[j], token_score[j]))
+
+Close_Conn(conn)
+
+end = time.time()
+
+print(end-start)
 #sql developer 쿼리랑 다르게 세미콜론 있으면 오류남
 
+
+#sql = "INSERT INTO sentences (content, score) VALUES (%s ,%s)"
+#sql = "DELETE FROM sentences WHERE content LIKE 'sentence'"
+#sql = "DELETE FROM inbound_score"
+#sql = "DROP TABLE inbound_score"
+
+
+#cur.execute(CSSSQL)
+
+
+
+
+
+
+'''
 CSSSQL =     """CREATE TABLE IF NOT EXISTS E_CONTENT_SPAM_SCORE(
                 CONTENTSPAMSCOREUID NUMBER NOT NULL,
                 MEMBERUID NUMBER DEFAULT 0 NOT NULL,
@@ -60,30 +135,4 @@ ISCSQL =     """CREATE TABLE E_INBOUND_SPAM_CHECK(
                 CONSTRAINT E_INBOUND_SPAM_CHECK PRIMARY KEY (INBOUNDSPAMCHECKUID) USING INDEX TABLESPACE ${TABLESPACE},
                 FOREIGN KEY CONTENTSPAMSCOREUID REFERENCES E_CONTENT_SPAM_SCORE(CONTENTSPAMSCOREUID),
                 CHARACTER SET utf8 COLLATE utf8_general_ci"""
-
-
-#sql = "INSERT INTO sentences (content, score) VALUES (%s ,%s)"
-#sql = "DELETE FROM sentences WHERE content LIKE 'sentence'"
-#sql = "DELETE FROM inbound_score"
-#sql = "DROP TABLE inbound_score"
-
-
-#cur.execute(CSSSQL)
-
-for i in cur:
-    print(i)
-
-def Close_Conn(conn):
-    conn.commit()
-    conn.close()
-
-'''
-
-for i in range(len(data)):
-    result = at.ACC_Check(data[i])
-    sql = "INSERT INTO inbound_score (content, score) VALUES (%s ,%s)"
-    cur.execute(sql, (data[i], result))
-    conn.commit()
-
-conn.close()
 '''
