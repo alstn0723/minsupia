@@ -57,7 +57,7 @@ def abuse_predict():
     CSSU = cur.fetchall()[0][0]
     CSSU = {"contentSpamScoreUid":CSSU}
 
-    #DB에 저장 후 DB 연결 종료
+    #DB에 저장 후 커서 연결 종료
     oc.Close_Conn(conn)
 
     return CSSU
