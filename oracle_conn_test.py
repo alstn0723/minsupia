@@ -4,6 +4,7 @@ import pandas as pd
 import abuse_tester as at
 
 start = time.time()
+MODEL, BOW = at.Load_Model('Abuse_Detect.h5', 'Abuse_Tokenizer.pickle')
 
 oc.Oracle_Init()
 
@@ -12,17 +13,17 @@ conn, cur = oc.Oracle_Conn("d_alstn0723", "steam9588!", "192.168.2.101:1521/DCDB
 
 data = pd.read_csv("inbound.csv")
 data = data['CONTENT']
-
+'''
 
 sql = "DELETE FROM E_CONTENT_SPAM_SCORE"
 cur.execute(sql)
 sql = "DELETE FROM E_TOKEN_SPAM_SCORE"
 cur.execute(sql)
-
+'''
 
 for i in range(len(data)):
     print(i)
-    sentence, total_score, tokens, token_score = at.ACC_Check(data[i])
+    sentence, total_score, tokens, token_score = at.ACC_Check(data[i], MODEL, BOW)
 
     sql = """INSERT INTO E_CONTENT_SPAM_SCORE(CONTENTSPAMSCOREUID, MEMBERUID, USERUID, CONTENT, SCORE) VALUES (CONTENT_SPAM_SCORE_SEQ.NEXTVAL, :1, :2, :3, :4)"""
     cur.execute(sql, (17115, 17115, sentence, total_score))
