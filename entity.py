@@ -131,7 +131,7 @@ def NER_TAG(DATA):
 
         #해야 할 일
         #OCT 20 같은거 처리
-        # wednesday 를 wed 에서 we'd ( we had ) 로 판단해버림
+        #wednesday 를 wed 에서 we'd ( we had ) 로 판단해버림
 
         if (TYPE in NEEDS) and (TYPE != ""):
             print(f"{TOKEN} ==> {TYPE}")
