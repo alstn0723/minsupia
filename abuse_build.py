@@ -17,59 +17,6 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 stop_words = set(stopwords.words('english'))
 URL_REGEX = re.compile(r'http\S{7,}')
 
-'''
-#교정 사전 내 단어 추출
-def words(text): return re.findall('[a-z]+', text.lower())
-
-#교정 사전 모델
-def train(features):
-    model = collections.defaultdict(lambda: 1)
-    for f in features:
-        model[f] += 1
-    return model
-
-dic = open('big.txt').read()
-NWORDS = train(words(dic))
-
-alphabet = 'abcdefghijklmnopqrstuvwxyz'
-
-#편집거리 1 기준 candidate
-def edits_dtc1(word):
-   splits     = [(word[:i], word[i:]) for i in range(len(word) + 1)]
-   deletes    = [a + b[1:] for a, b in splits if b]
-   transposes = [a + b[1] + b[0] + b[2:] for a, b in splits if len(b)>1]
-   replaces   = [a + c + b[1:] for a, b in splits for c in alphabet if b]
-   inserts    = [a + c + b     for a, b in splits for c in alphabet]
-   return set(deletes + transposes + replaces + inserts)
-
-#편집거리 2기준 candidate
-def edits_dtc2(word):
-    return set(e2 for e1 in edits_dtc1(word) for e2 in edits_dtc1(e1) if e2 in NWORDS)
-
-def known(words): return set(w for w in words if w in NWORDS)
-
-def correct(word):
-    candidates = known([word]) or known(edits_dtc1(word)) or edits_dtc2(word) or [word]
-    return max(candidates, key=NWORDS.get)
-
-
-email_regex = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
-#date_regex = re.compile()
-
-
-#find a listed mms which include e-mail
-def emailfind(list):
-    emailhere = []
-
-    for i in range(len(list)):
-        for j in range(len(list[i])):
-            if (None!= email_regex.match(list[i][j])):
-                print('email here.')
-                emailhere.append(list[i])
-            else:
-                print('No email!')
-    return emailhere
-'''
 
 #CSV 불러오면서 df 정리
 def Load_data(directory):
