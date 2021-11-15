@@ -1,7 +1,9 @@
 import re
 import spacy
 import pandas as pd
+import datefinder
 #from spacy.training import Example
+
 
 #SPACY package Load
 SPACY_LOAD = spacy.load('C:/Users/trumpia/anaconda3/Lib/site-packages/en_core_web_sm/en_core_web_sm-3.1.0')
@@ -12,7 +14,7 @@ EMAIL_REGEX = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
 ADDRESS_REGEX = re.compile(r'(?!2021)\d{3,5}(.){15,}\D\d{5}')
 URL_REGEX = re.compile(r'http\S{7,}')
 YEAR_REGEX = re.compile(r'((19)|(20))([0-9]{2})')
-#MONTH_REGEX = re.compile(r'
+
 DATE_REGEX_MONTH = re.compile(r'((0)?[1-9]|1[012])([-/ .])(3[01]|[12][0-9]|(0)?[1-9])')
 DATE_REGEX_YEAR = re.compile(r'((0)?[1-9]|1[012])([-/ .])(3[01]|[12][0-9]|(0)?[1-9])([-/ .])(([1-9][0-9]{3})|([0-9]{2}))')
 DATE_REGEX_DIGITONLY = re.compile(r'(([1-9][0-9]{3})|([0-9]{2}))((0)[1-9]|1[012])(3[01]|[12][0-9]|(0)[1-9])')
@@ -20,55 +22,27 @@ TIME_REGEX = re.compile(r'^((([0]?[1-9]|1[0-2])(:|\.)?[0-5][0-9]((:|\.)[0-5][0-9
 NEEDS = "DATE|TIME|ORDINAL"
 
 
-
-#MESSAGE 속 PHONE 찾아서 리턴
-def PHONE_EXTRACTOR(str):
-    search = re.search(PHONE_REGEX, str)
+def REGEX_DESTROYER(DATA, REGEX):
+    search = re.search(REGEX, DATA)
     if search != None:
-        result = search.group()
+        search = search.group()
+        result = DATA.replace(search, "")
         return result
     else:
-        return None
-
-#MESSAGE 속 URL 찾아서 리턴
-def URL_EXTRACTOR(str):
-    search = re.search(URL_REGEX, str)
-    if search != None:
-        result = search.group()
-        return result
-    else:
-        return None
-
-#MESSAGE 속 주소를 찾아서 리턴
-def ADDRESS_EXTRACTOR(str):
-    search = re.search(ADDRESS_REGEX, str)
-    if search != None:
-        result = search.group()
-        return result
-    else:
-        return None
+        return DATA
 
 
 def NER_TAG(DATA):
 
-    if URL_EXTRACTOR(DATA) != None:
-        URL = URL_EXTRACTOR(DATA)
-        DATA = DATA.replace(URL, "")
-
-    if ADDRESS_EXTRACTOR(DATA) != None:
-        ADDRESS = ADDRESS_EXTRACTOR(DATA)
-        DATA = DATA.replace(ADDRESS, "")
-
-    if PHONE_EXTRACTOR(DATA) != None:
-        PHONE = PHONE_EXTRACTOR(DATA)
-        DATA = DATA.replace(PHONE, "")
+    DATA = REGEX_DESTROYER(DATA, URL_REGEX)
+    DATA = REGEX_DESTROYER(DATA, ADDRESS_REGEX)
+    DATA = REGEX_DESTROYER(DATA, EMAIL_REGEX)
+    DATA = REGEX_DESTROYER(DATA, PHONE_REGEX)
 
     #SPACY의 토큰화된 자체 객체로 DATA 변환
     OBJ = SPACY_LOAD(DATA)
 
-
     print("<--  " + DATA + "  -->")
-
 
     for TOKEN in OBJ:
 
@@ -95,9 +69,9 @@ def NER_TAG(DATA):
 
         #REGEX로 못찾은거 뽑기
         #DATE CLASSIFY
-        if (DATE_REGEX_MONTH.match(str(TOKEN)) != None):
+        if (DATE_REGEX_MONTH.match(str()) != None):
             TYPE = "DATE"
-
+        TOKEN
         if (DATE_REGEX_YEAR.match(str(TOKEN)) != None):
             TYPE = "DATE"
 
@@ -138,7 +112,7 @@ def NER_TAG(DATA):
 
     print('----------------------------')
 
-
+    #TODO : 태그 달린거 에서 다 같은 포맷의 시간 정보로 change
 
 
 trm = pd.read_csv("inbound.csv", encoding='latin')
@@ -148,11 +122,12 @@ trm = trm['CONTENT']
 for i in range(len(trm)):
     NER_TAG(trm[i])
 
+
 NER_TAG("AutoReturn message 3587: You have reached a highly classified phone. If this message was in error, please notify us at 857-386-2000. This message will be traced and you will be contacted by one of our field agents within 24 hours. End message 3587.")
 NER_TAG("i want to reservate on next Friday")
 NER_TAG("Last Christmas, I was born")
 NER_TAG("How about 15:00 or 9:00aM of 09/04/21?")
-print(re.search(PHONE_REGEX, "AutoReturn message 3587: You have reached a highly classified phone. If this message was in error, please notify us at 857-386-2000. This message will be traced and you will be contacted by one of our field agents within 24 hours. End message 3587."))
+print(re.search(PHONE_REGEX, "AutoReturn message 3587: You have reached a highly classified phone. If this message was in error, please notify us at857-386-2000. This message will be traced and you will be contacted by one of our field agents within 24 hours. End message 3587."))
 print(re.search(PHONE_REGEX, "857-386-2000"))
 
 
