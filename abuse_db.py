@@ -24,13 +24,16 @@ def abuse_predict():
     logging.info('prediction api called.')
 
     sentence = request.json.get('content')
-    member_Uid = request.json.get('memberUid')
-    user_Uid = request.json.get('userId')
+    member_Uid = int(request.json.get('memberUid'))
+    user_Uid = int(request.json.get('userId'))
 
-    if member_Uid != int:
+    if sentence == None:
+        raise ValueError("Content does not exist")
+
+    elif type(member_Uid) != int:
         raise ValueError("member_Uid Error occured.")
 
-    elif user_Uid != int:
+    elif type(user_Uid) != int:
         raise ValueError("user_Uid Error occured.")
 
     org_idx = sentence.find(":")
