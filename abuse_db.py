@@ -1,24 +1,33 @@
 from flask import Flask, request
 import abuse_tester as at
 import oracle_conn as oc
-import logging
+import logging.handlers
 
+#일 단위 로그파일 생성
 
-logging.basicConfig(filename = "log/monitoring.log", level = logging.INFO)
+mylogger = logging.getLogger()
+mylogger.setLevel(logging.INFO)
+rotatingHandler = logging.handlers.TimedRotatingFileHandler(filename='log/'+'monitoring.log', when='midnight', interval=1, encoding='utf-8')
+fomatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+rotatingHandler.setFormatter(fomatter)
+mylogger.addHandler(rotatingHandler)
+
 
 #DB구동
 oc.Oracle_Init()
+
 #MODEL 불러오기
 MODEL, BOW = at.Load_Model('Abuse_Detect.h5', 'Abuse_Tokenizer.pickle')
 
 app = Flask(__name__)
 
+'''
 @app.route('/')
 def mainpage():
     return 'Hi minsoo'
+'''
 
-
-@app.route('/predict/oracle', methods=['POST'])
+@app.route('/spam/nlp', methods=['POST'])
 def abuse_predict():
 
     logging.info('prediction api called.')
@@ -86,8 +95,6 @@ def abuse_predict():
     logging.info("DB closed")
 
     return CSSU
-
-
 
 if __name__ == '__main__':
     app.run(host='192.168.3.184', port=5000)
