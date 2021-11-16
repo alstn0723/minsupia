@@ -1,4 +1,3 @@
-import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from nltk.corpus import stopwords
 from tensorflow.keras.models import load_model
