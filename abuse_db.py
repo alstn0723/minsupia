@@ -27,7 +27,7 @@ def abuse_predict():
     member_Uid = int(request.json.get('memberUid'))
     user_Uid = int(request.json.get('userId'))
 
-    if sentence == None:
+    if type(sentence) != str:
         raise ValueError("Content does not exist")
 
     elif type(member_Uid) != int:
