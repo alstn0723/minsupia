@@ -1,0 +1,170 @@
+INFO:werkzeug: * Running on http://192.168.3.184:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:18:49] "POST /predict/oracle HTTP/1.1" 200 -
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:19:25] "POST /predict/oracle HTTP/1.1" 200 -
+INFO:werkzeug: * Running on http://192.168.3.184:5000/ (Press CTRL+C to quit)
+ERROR:abuse_db:Exception on /predict/oracle [POST]
+Traceback (most recent call last):
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\_compat.py", line 39, in reraise
+    raise value
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "C:\Users\trumpia\pythonProject\abuse_db.py", line 25, in abuse_predict
+    logging("123")
+TypeError: 'module' object is not callable
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:21:53] "[35m[1mPOST /predict/oracle HTTP/1.1[0m" 500 -
+ERROR:abuse_db:Exception on /predict/oracle [POST]
+Traceback (most recent call last):
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\_compat.py", line 39, in reraise
+    raise value
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "C:\Users\trumpia\pythonProject\abuse_db.py", line 25, in abuse_predict
+    logging("123")
+TypeError: 'module' object is not callable
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:22:08] "[35m[1mPOST /predict/oracle HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Running on http://192.168.3.184:5000/ (Press CTRL+C to quit)
+INFO:root:123
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:23:20] "POST /predict/oracle HTTP/1.1" 200 -
+INFO:werkzeug: * Running on http://192.168.3.184:5000/ (Press CTRL+C to quit)
+INFO:root:prediction api called.
+INFO:root:Input Message ==>  This TensorFlow binary is optimized with oneAPI Deep Neural Network Library
+INFO:root:Sentence Score : 1.4726
+INFO:root:Tokens : ['tensorflow', 'binary', 'optimized', 'oneapi', 'deep', 'neural', 'network', 'library']
+INFO:root:Token_scores : ['3.4', '3.4', '3.4', '3.4', '5.18', '3.4', '1.53', '2.09']
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:29:21] "POST /predict/oracle HTTP/1.1" 200 -
+INFO:root:prediction api called.
+INFO:root:Input Message ==> 
+INFO:root:Sentence Score : 3.3955
+INFO:root:Tokens : []
+INFO:root:Token_scores : []
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:33:43] "POST /predict/oracle HTTP/1.1" 200 -
+INFO:root:prediction api called.
+INFO:root:Input Message ==> 
+INFO:root:Sentence Score : 3.3955
+INFO:root:Tokens : []
+INFO:root:Token_scores : []
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:36:13] "POST /predict/oracle HTTP/1.1" 200 -
+INFO:root:prediction api called.
+INFO:root:Input Message ==> ass ass i will kick your ass
+INFO:root:Sentence Score : 99.6804
+INFO:root:Tokens : ['ass', 'ass', 'kick', 'ass']
+INFO:root:Token_scores : ['63.98', '63.98', '2.9', '63.98']
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:37:01] "POST /predict/oracle HTTP/1.1" 200 -
+INFO:werkzeug: * Running on http://192.168.3.184:5000/ (Press CTRL+C to quit)
+INFO:root:prediction api called.
+INFO:root:Sentence ==> ass ass i will kick your ass
+INFO:root:Sentence Score : 99.6804
+INFO:root:Tokens : ['ass', 'ass', 'kick', 'ass']
+INFO:root:Token_scores : ['63.98', '63.98', '2.9', '63.98']
+INFO:root:DB connected
+INFO:root:E_CONTENT_SPAM_SCORE
+INFO:root:E_TOKEN_SPAM_SCORE
+INFO:root:DB closed
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:37:44] "POST /predict/oracle HTTP/1.1" 200 -
+INFO:root:prediction api called.
+INFO:root:Sentence ==> ass ass i will kick your ass
+INFO:root:Sentence Score : 99.6804
+INFO:root:Tokens : ['ass', 'ass', 'kick', 'ass']
+INFO:root:Token_scores : ['63.98', '63.98', '2.9', '63.98']
+INFO:root:DB connected
+ERROR:abuse_db:Exception on /predict/oracle [POST]
+Traceback (most recent call last):
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\_compat.py", line 39, in reraise
+    raise value
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "C:\Users\trumpia\pythonProject\abuse_db.py", line 56, in abuse_predict
+    cur.execute(sql, (member_Uid, user_Uid, sentence, total_score))
+cx_Oracle.IntegrityError: ORA-01400: cannot insert NULL into ("PROG_NEW"."E_CONTENT_SPAM_SCORE"."MEMBERUID")
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:41:44] "[35m[1mPOST /predict/oracle HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Running on http://192.168.3.184:5000/ (Press CTRL+C to quit)
+INFO:root:prediction api called.
+ERROR:root:member_Uid Error occured.
+ERROR:abuse_db:Exception on /predict/oracle [POST]
+Traceback (most recent call last):
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\_compat.py", line 39, in reraise
+    raise value
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "C:\Users\trumpia\pythonProject\abuse_db.py", line 32, in abuse_predict
+    raise ValueError
+ValueError
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:46:29] "[35m[1mPOST /predict/oracle HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Running on http://192.168.3.184:5000/ (Press CTRL+C to quit)
+INFO:root:prediction api called.
+ERROR:root:member_Uid Error occured.
+INFO:root:Sentence ==> ass ass i will kick your ass
+INFO:root:Sentence Score : 99.6804
+INFO:root:Tokens : ['ass', 'ass', 'kick', 'ass']
+INFO:root:Token_scores : ['63.98', '63.98', '2.9', '63.98']
+INFO:root:DB connected
+ERROR:abuse_db:Exception on /predict/oracle [POST]
+Traceback (most recent call last):
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\_compat.py", line 39, in reraise
+    raise value
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "C:\Users\trumpia\pythonProject\abuse_db.py", line 62, in abuse_predict
+    cur.execute(sql, (member_Uid, user_Uid, sentence, total_score))
+cx_Oracle.IntegrityError: ORA-01400: cannot insert NULL into ("PROG_NEW"."E_CONTENT_SPAM_SCORE"."MEMBERUID")
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:47:23] "[35m[1mPOST /predict/oracle HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Running on http://192.168.3.184:5000/ (Press CTRL+C to quit)
+INFO:root:prediction api called.
+ERROR:abuse_db:Exception on /predict/oracle [POST]
+Traceback (most recent call last):
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 2446, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1951, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1820, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\_compat.py", line 39, in reraise
+    raise value
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1949, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\trumpia\PycharmProjects\pythonProject\venv\lib\site-packages\flask\app.py", line 1935, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "C:\Users\trumpia\pythonProject\abuse_db.py", line 31, in abuse_predict
+    raise ValueError("member_Uid Error occured.")
+ValueError: member_Uid Error occured.
+INFO:werkzeug:192.168.3.184 - - [16/Nov/2021 13:48:45] "[35m[1mPOST /predict/oracle HTTP/1.1[0m" 500 -
