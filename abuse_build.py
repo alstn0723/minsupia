@@ -90,7 +90,7 @@ def Fitting(DATA):
     BOW = Tokenizer()
     BOW.fit_on_texts(DATA)
 
-    threshold = 3  #기준 기준 엄기준
+    threshold = 2  #기준 기준 엄기준
     total_cnt = len(BOW.word_index) # 단어의 수
 
     rare_cnt = 0    # 등장 빈도수가 threshold보다 작은 단어의 개수를 카운트
@@ -157,7 +157,7 @@ def Padding(DATA, max_len):
 def Build_Model(vocab_size):
     model = Sequential()
 
-    model.add(Embedding(vocab_size, 100))   #임베딩 벡터의 차원 100
+    model.add(Embedding(vocab_size, 128))   #임베딩 벡터의 차원 100
     model.add(Dropout(0.2))                 #과소적합 방지용 Dropout층
     model.add(LSTM(128))                    #LSTM 모델
     model.add(Dropout(0.2))
