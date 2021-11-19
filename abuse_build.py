@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import re
 import os
-
 from keras.layers import Dropout
 from nltk.corpus import stopwords
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -188,7 +187,7 @@ def Evaluate(MODEL_H5, TEST, TEST_FLAG):
 
 def Main():
     #Input CSV 불러오기
-    DATA = Load_data("ADATA.csv")
+    DATA = Load_data("/dataset/ADATA.csv")
 
     #학습, 검증 DATA 분리
     TRAIN_DATA, TEST_DATA, TRAIN_DATA_FLAG, TEST_DATA_FLAG = Seperate(DATA)
