@@ -3,6 +3,7 @@ import abuse_tester as at
 import oracle_conn as oc
 import logging.handlers
 
+
 #일 단위 로그파일 생성
 
 mylogger = logging.getLogger()
@@ -21,11 +22,6 @@ MODEL, BOW = at.Load_Model('Abuse_Detect.h5', 'Abuse_Tokenizer.pickle')
 
 app = Flask(__name__)
 
-'''
-@app.route('/')
-def mainpage():
-    return 'Hi minsoo'
-'''
 
 @app.route('/spam/nlp', methods=['POST'])
 def abuse_predict():
