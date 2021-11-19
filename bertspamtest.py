@@ -4,8 +4,10 @@ import tensorflow_text as text
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
-df = pd.read_csv('/dataset/spam_data.csv')
+
+df = pd.read_csv('dataset/spam_data.csv')
 
 df.head()
 
@@ -56,9 +58,24 @@ model.compile(optimizer ='adam',
                loss = 'binary_crossentropy',
                metrics = Metrics)
 
-history = model.fit(X_train, y_train, epochs = 10)
-
+history = model.fit(X_train, y_train, epochs = 11)
+model.save('bert_model.h5')
 print(model.evaluate(X_test,y_test))
 
 y_pred = model.predict(X_test)
 y_pred = y_pred.flatten() # require to be in one-dimensional array , for easy manipulation
+
+predict_text = [
+                # Spam
+                'We’d all like to get a $10,000 deposit on our bank accounts out of the blue, but winning a prize—especially if you’ve never entered a contest',
+                'Netflix is sending you a refund of $12.99. Please reply with your bank account and routing number to verify and get your refund',
+                'Your account is temporarily frozen. Please log in to to secure your account ',
+                #ham
+                'The article was published on 18th August itself',
+                'Although we are unable to give you an exact time-frame at the moment, I would request you to stay tuned for any updates.',
+                'The image you sent is a UI bug, I can check that your article is marked as regular and is not in the monetization program.'
+]
+
+test_results = model.predict(predict_text)
+
+print(test_results)
