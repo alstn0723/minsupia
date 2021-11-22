@@ -9,7 +9,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 df = pd.read_csv('dataset/spam_data.csv')
 
-df.head()
+print(df)
 
 #분리
 df_spam = df[df['Category']=='spam']
@@ -22,9 +22,10 @@ print("Spam Dataset Shape:", df_spam.shape)
 df_ham_downsampled = df_ham.sample(df_spam.shape[0])
 df_ham_downsampled.shape
 
+#반반 맞춘 ㅈ만한 데이터
 df_balanced = pd.concat([df_spam , df_ham_downsampled])
 
-df_balanced['Category'].value_counts()
+print(df_balanced['Category'].value_counts())
 df_balanced.sample(10)
 
 #spam 1 ham 0
@@ -58,7 +59,7 @@ model.compile(optimizer ='adam',
                loss = 'binary_crossentropy',
                metrics = Metrics)
 
-history = model.fit(X_train, y_train, epochs = 11)
+history = model.fit(X_train, y_train, epochs = 10)
 model.save('bert_model.h5')
 print(model.evaluate(X_test,y_test))
 
