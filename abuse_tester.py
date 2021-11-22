@@ -1,7 +1,10 @@
+import pandas as pd
+import tensorflow
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from nltk.corpus import stopwords
 from tensorflow.keras.models import load_model
 import pickle, re
+
 
 URL_REGEX = re.compile(r'http\S{7,}')
 
@@ -24,7 +27,7 @@ def Load_Model(MODEL_H5, BOW_PICKLE):
         raise FileNotFoundError("h5 파일 경로 잘못됨.")
 
 
-MODEL, BOW = Load_Model('Abuse_Detect.h5', 'Abuse_Tokenizer.pickle')
+
 
 
 def Preprocess_Predict(sentence):
@@ -72,11 +75,15 @@ def ACC_Check(sentence, MODEL, BOW):
     total_score = round(total_score * 100, 4)
     return sentence, total_score, tokens, token_score
 
+MODEL, BOW = Load_Model('Abuse_Detect.h5', 'Abuse_Tokenizer.pickle')
 
-'''
+data = pd.read_csv('/dataset/inbound.csv')
+data = data['CONTENT']
+for j in range(len(data)):
+    sentence, total_score, tokens, token_score= ACC_Check(data[j],MODEL, BOW)
     if (total_score > 0):
-        print("DATA total score : {0} ".format(round(total_score * 100, 4)))
+        print("DATA total score : {0} ".format(round(total_score, 4)))
         print(sentence)
         for i in range(len(tokens)):
             print("{0}  ==>  {1}".format(tokens[i], token_score[i]))
-'''
+
